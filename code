@@ -1,0 +1,60 @@
+from random import randint
+from pygame import *
+class GameSprite(sprite.Sprite):
+    def __init__(self, player_image, player_x, player_y, size_x , size_y , player_speed):
+        super().__init__()
+        self.image = transform.scale(image.load(player_image),  (size_x, size_y))
+        self.speed = player_speed
+        self.rect = self.image.get_rect()
+        self.rect.x = player_x
+        self.rect.y = player_y
+    def reload(self):
+        window.blit(self.image, (self.rect.x, self.rect.y))
+        mixer.init()
+class Player(GameSprite):
+ 
+    def update(self):
+        keys_pressed = key.get_pressed()
+        if keys_pressed[K_UP]:
+            self.rect.y-=10
+        elif keys_pressed[K_DOWN]:
+            self.rect.y+=10
+
+        if keys_pressed[K_LEFT] and self.rect.x <=0:
+            self.rect.y+=10
+        elif keys_pressed[K_RIGHT] and self.rect.x >=650:
+            self.rect.y -= 10
+
+
+
+
+display.set_caption("Ping pong")
+background = transform.scale(image.load("Space.jpg"), (win_width,win_height))
+player = Player("spaceshipone-spacecraft-pixel-art-pixel-art-removebg-preview.png", 100,440, 65, 65, 1)
+
+game = True
+finish = False
+while game:
+    for e in event.get():
+        if e.type == QUIT:
+            game = False
+    if not finish:
+
+        window.blit(background,(0,0))
+        
+        win = font.render("Выиграно: " + str(kills), True, (255,255,255))
+        lose = font.render("Проиграно: " + str(lost),True,  (255,255,255))
+        window.blit(lose, (0,0))
+        window.blit(win, (0,100))
+        clock.tick(FPS)
+        
+        if finish!= True:
+            if int(lost) >= 3:
+                finish = True           
+                lose = font.render('YOU LOSE', True, (230,0,0))
+                window.blit(lose, (200,200))
+            elif int(kills) >= 10:
+                finish = True
+                win = font.render('YOU WIN', True, (230,100,0))
+                window.blit(win, (200,200) )  
+    display.update()
